@@ -6,6 +6,10 @@
 
   programs.home-manager.enable = true;
 
+  home.sessionVariables = {
+    FZF_DEFAULT_OPTS = "--color=bg+:#191724,bg:#191724,spinner:#f6c177,hl:#ebbcba --color=fg:#e0def4,header:#31748f,info:#9ccfd8,pointer:#c4a7e7 --color=marker:#eb6f92,fg+:#e0def4,prompt:#9ccfd8,hl+:#ebbcba";
+  };
+
   xdg.configFile."mango" = {
     source = ../configs/mango;
     recursive = true;
@@ -41,12 +45,34 @@
       ls = "eza";
       cat = "bat";
       rebuild = "sudo nixos-rebuild switch --flake ~/nixos/src#nixos";
-			v = "nvim";
+      v = "nvim";
+    };
+
+		initContent = ''
+		source <(fzf --zsh)
+		'';
+  };
+  programs.starship = {
+    enable = true;
+    settings = {
+      add_newline = false;
     };
   };
   programs.zoxide = {
     enable = true;
     enableZshIntegration = true;
+    options = [
+      "--cmd cd"
+    ];
+  };
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+		historyWidgetOptions = [
+      "--sort"
+      "--exact"
+      "--preview 'echo {}' --preview-window down:3:wrap"
+    ];
   };
   programs.neovim = {
     enable = true;
