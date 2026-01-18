@@ -94,12 +94,12 @@ in
     enable = true;
     settings = {
       bar = {
-        height = 15;
+        height = 16;
         location = "top";
         background = yambarize base;
         foreground = yambarize subtle;
-        spacing = 4;
-        margin = 3;
+        spacing = 2;
+        margin = 4;
         font = "Cozette";
         left = [
           {
@@ -158,6 +158,51 @@ in
           }
 
         ];
+        right = [
+          {
+            battery = {
+              name = "BAT0";
+              poll-interval = 15000;
+              content = {
+                map = {
+                  # Map MUST have a default particle
+                  default = {
+                    string = {
+                      text = "{capacity}%";
+                      foreground = yambarize text;
+                    };
+                  };
+                  conditions = {
+                    "state == charging" = {
+                      string = {
+                        text = "{capacity}%";
+                        foreground = yambarize pine;
+                      };
+                    };
+                    "state == full" = {
+                      string = {
+                        text = "{capacity}%";
+                        foreground = yambarize foam;
+                      };
+                    };
+                    "capacity <= 15" = {
+                      string = {
+                        text = "{capacity}%";
+                        foreground = yambarize love;
+                      };
+                    };
+                    "capacity <= 30" = {
+                      string = {
+                        text = "{capacity}%";
+                        foreground = yambarize gold;
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          }
+        ];
       };
     };
   };
@@ -204,7 +249,7 @@ in
     shellAliases = {
       ls = "eza";
       cat = "bat";
-      rebuild = "sudo nixos-rebuild switch --flake ~/nixos/src#nixos";
+      rebuild = "sudo nixos-rebuild switch --flake ~/nixos/src#nixos && notify-send \"Rebuild\" \"Finished rebuilding NixOS configuration\" -u normal";
       v = "nvim";
     };
 
@@ -277,11 +322,90 @@ in
       gtk-custom-css = "${../configs/ghostty/tabs.css}";
     };
   };
+  programs.zathura = {
+    enable = true;
+    options = {
+      default-bg = base;
+      default-fg = text;
+
+      statusbar-bg = base;
+      statusbar-fg = muted;
+
+      inputbar-bg = overlay;
+      inputbar-fg = text;
+
+      notification-bg = text;
+      notification-fg = base;
+
+      notification-error-bg = love;
+      notification-error-fg = base;
+
+      notification-warning-bg = gold;
+      notification-warning-fg = base;
+
+      highlight-color = "rgba(235, 188, 186, 0.5)";
+      highlight-active-color = "rgba(235, 111, 146, 0.5)";
+
+      completion-bg = overlay;
+      completion-fg = rose;
+
+      completion-highlight-fg = base;
+      completion-highlight-bg = rose;
+
+      recolor-lightcolor = base;
+      recolor-darkcolor = text;
+
+      recolor = true;
+      recolor-keephue = true;
+      font = "Cozette normal 11";
+      guioptions = "";
+
+    };
+  };
+
+  programs.fuzzel = {
+    enable = true;
+    settings = {
+      main = {
+        font = "Cozette:pixelsize=11";
+        prompt = "\"✦ \"";
+        terminal = "ghostty -e {cmd}";
+        lines = "6";
+        minimal-lines = true;
+        auto-select = true;
+        width = 40;
+        horizontal-pad = 8;
+        vertical-pad = 8;
+        inner-pad = 2;
+        icons-enabled = false;
+      };
+      colors = {
+        background = yambarize base;
+        text = yambarize muted;
+        match = yambarize text;
+        selection = yambarize rose;
+        selection-text = yambarize base;
+        border = yambarize rose;
+        prompt = yambarize rose;
+        input = yambarize text;
+        placeholder = yambarize muted;
+        selection-match = yambarize base;
+        counter = yambarize muted;
+      };
+      border = {
+        width = 1;
+        radius = 0;
+      };
+    };
+  };
+
+  xdg.mimeApps.defaultApplications = {
+    "application/pdf" = [ "org.pwmt.zathura.desktop" ];
+  };
 
   home.packages = with pkgs; [
     vesktop
     ayugram-desktop
     qutebrowser
-    zathura
   ];
 }

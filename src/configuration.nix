@@ -5,10 +5,10 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -47,51 +47,54 @@
     layout = "us";
     variant = "";
   };
-	powerManagement.enable = true;
-	powerManagement.powertop.enable = true;
+  powerManagement.enable = true;
+  powerManagement.powertop.enable = true;
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.bilaii = {
     shell = pkgs.zsh;
     isNormalUser = true;
     description = "bilaii";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+    packages = with pkgs; [ ];
   };
-	programs.zsh.enable = true;
+  programs.zsh.enable = true;
+  programs.dconf.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-	services.displayManager.ly.enable = true;
+  services.displayManager.ly.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-		# WM Stuff
-		ghostty
-		rofi
-		grim
-		slurp
-		wl-clipboard
-		swww
-		mako
-		libnotify
-		yambar
+    # WM Stuff
+    ghostty
+    grim
+    slurp
+    wl-clipboard
+    swww
+    mako
+    libnotify
+    yambar
     # Other
-		wget
-		brightnessctl
-		# Neovim
-		gcc
-		nil
-		# Shell
-		eza
-		zoxide
-		bat
-		btop
-		wiremix
+    wget
+    brightnessctl
+    # Neovim
+    gcc
+    nil
+    # Shell
+    eza
+    zoxide
+    bat
+    btop
+    wiremix
   ];
-	fonts.packages = with pkgs; [
-			cozette
-		];
+  fonts.packages = with pkgs; [
+    cozette
+  ];
   programs.mango.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
