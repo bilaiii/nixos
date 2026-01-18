@@ -1,3 +1,74 @@
+let
+  base = "#191724";
+  surface = "#1f1d2e";
+  overlay = "#26233a";
+  muted = "#6e6a86";
+  subtle = "#908caa";
+  text = "#e0def4";
+  love = "#eb6f92";
+  gold = "#f6c177";
+  rose = "#ebbcba";
+  pine = "#31748f";
+  foam = "#9ccfd8";
+  iris = "#c4a7e7";
+
+  divider = {
+    label = {
+      content = {
+        string = {
+          text = "::";
+        };
+      };
+    };
+  };
+  yambarize = color: "${builtins.substring 1 (-1) color}ff";
+in
+
+let
+  mkTag =
+    id:
+    let
+      sid = toString id;
+    in
+    {
+      map = {
+        default = {
+          string = {
+            text = "·";
+            foreground = yambarize muted;
+          };
+        };
+        conditions = {
+          "tag_${sid}_act == 1" = {
+            string = {
+              text = "✦";
+              foreground = yambarize rose;
+              deco = {
+                underline = {
+                  size = 2;
+                  color = yambarize rose;
+                };
+              };
+            };
+          };
+          "tag_${sid}_urg == 1" = {
+            string = {
+              text = "*";
+              foreground = yambarize love;
+            };
+          };
+          "tag_${sid}_pop == 1" = {
+            string = {
+              text = "⋄";
+              foreground = yambarize text;
+            };
+          };
+        };
+        on-click = "mmsg -t ${sid}";
+      };
+    };
+in
+
 { pkgs, ... }:
 {
   home.username = "bilaii";
@@ -7,7 +78,7 @@
   programs.home-manager.enable = true;
 
   home.sessionVariables = {
-    FZF_DEFAULT_OPTS = "--color=bg+:#191724,bg:#191724,spinner:#f6c177,hl:#ebbcba --color=fg:#e0def4,header:#31748f,info:#9ccfd8,pointer:#c4a7e7 --color=marker:#eb6f92,fg+:#e0def4,prompt:#9ccfd8,hl+:#ebbcba";
+    FZF_DEFAULT_OPTS = "--color=bg+:${base},bg:${base},spinner:${gold},hl:${rose} --color=fg:${text},header:${pine},info:${foam},pointer:${iris} --color=marker:${love},fg+:${text},prompt:${foam},hl+:${rose}";
   };
 
   xdg.configFile."mango" = {
@@ -17,6 +88,95 @@
   xdg.configFile."mango/autostart.sh" = {
     source = ../configs/mango/autostart.sh;
     executable = true;
+  };
+
+  programs.yambar = {
+    enable = true;
+    settings = {
+      bar = {
+        height = 15;
+        location = "top";
+        background = yambarize base;
+        foreground = yambarize subtle;
+        spacing = 4;
+        margin = 3;
+        font = "Cozette";
+        left = [
+          {
+            clock = {
+              content = {
+                list = {
+                  items = [
+                    {
+                      string = {
+                        text = "{date}";
+                      };
+                    }
+                    {
+                      string = {
+                        text = "{time}";
+                        foreground = yambarize text;
+                      };
+                    }
+                  ];
+                };
+              };
+            };
+          }
+          divider
+          {
+            script = {
+              path = "${../configs/yambar/layout.sh}";
+              content = {
+                string = {
+                  text = "{layout}";
+                };
+              };
+            };
+          }
+          divider
+          {
+            script = {
+              path = "${../configs/yambar/mango.sh}";
+              content = {
+                list = {
+                  # Use map to generate 1 through 9
+                  items = map mkTag [
+                    1
+                    2
+                    3
+                    4
+                    5
+                    6
+                    7
+                    8
+                    9
+                  ];
+                };
+              };
+            };
+          }
+
+        ];
+      };
+    };
+  };
+  services.mako = {
+    enable = true;
+    settings = {
+      anchor = "bottom-left";
+      layer = "overlay";
+      max-visible = 3;
+      default-timeout = 8000;
+      font = "Cozette 11";
+      padding = "6";
+      outer-margin = "12,0";
+      icon-location = "left";
+      border-color = rose;
+      border-size = 1;
+      background-color = overlay;
+      text-color = text;
+    };
   };
   programs.git = {
     enable = true;
@@ -48,9 +208,9 @@
       v = "nvim";
     };
 
-		initContent = ''
-		source <(fzf --zsh)
-		'';
+    initContent = ''
+      		source <(fzf --zsh)
+      		'';
   };
   programs.starship = {
     enable = true;
@@ -68,7 +228,7 @@
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
-		historyWidgetOptions = [
+    historyWidgetOptions = [
       "--sort"
       "--exact"
       "--preview 'echo {}' --preview-window down:3:wrap"
