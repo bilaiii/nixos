@@ -95,11 +95,11 @@ in
   };
 
   xdg.configFile."mango" = {
-    source = ../configs/mango;
+    source = ./dotfiles/mango;
     recursive = true;
   };
   xdg.configFile."mango/autostart.sh" = {
-    source = ../configs/mango/autostart.sh;
+    source = ./dotfiles/mango/autostart.sh;
     executable = true;
   };
 
@@ -128,7 +128,7 @@ in
           divider
           {
             script = {
-              path = "${../configs/yambar/layout.sh}";
+              path = "${./dotfiles/yambar/layout.sh}";
               content = {
                 string = {
                   text = "{layout}";
@@ -139,7 +139,7 @@ in
           divider
           {
             script = {
-              path = "${../configs/yambar/mango.sh}";
+              path = "${./dotfiles/yambar/mango.sh}";
               content = {
                 list = {
                   # Use map to generate 1 through 9
@@ -308,7 +308,7 @@ in
     shellAliases = {
       ls = "eza";
       cat = "bat";
-      rebuild = "sudo nixos-rebuild switch --flake ~/nixos/src#nixos && notify-send \"Rebuild\" \"Finished rebuilding NixOS configuration\" -u normal";
+      rebuild = "sudo nixos-rebuild switch --flake ~/nixos#nixos && notify-send \"Rebuild\" \"Finished rebuilding NixOS configuration\" -u normal";
       v = "nvim";
     };
 
@@ -377,8 +377,8 @@ in
         "ctrl+equal=set_font_size:22"
         "ctrl+minus=set_font_size:11"
       ];
-      custom-shader = "${../configs/ghostty/cursor_warp.glsl}";
-      gtk-custom-css = "${../configs/ghostty/tabs.css}";
+      custom-shader = "${./dotfiles/ghostty/cursor_warp.glsl}";
+      gtk-custom-css = "${./dotfiles/ghostty/tabs.css}";
     };
   };
   programs.zathura = {
@@ -466,5 +466,6 @@ in
     vesktop
     ayugram-desktop
     qutebrowser
+		obsidian
   ];
 }
