@@ -2,10 +2,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-		home-manager =  {
-			url = "github:nix-community/home-manager"; 
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     mangowc = {
       url = "github:DreamMaoMao/mangowc";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -19,8 +19,11 @@
       nixpkgs,
       mangowc,
       neovim-nightly-overlay,
-			home-manager
+      home-manager,
     }@inputs:
+    let
+      theme = import ./modules/home/theme.nix;
+    in
     {
 
       nixosConfigurations.think = nixpkgs.lib.nixosSystem {
@@ -40,15 +43,15 @@
           }
           ./hosts/think/configuration.nix
           mangowc.nixosModules.mango
-					home-manager.nixosModules.home-manager {
-							home-manager.useGlobalPkgs = true;
-							home-manager.useUserPackages = true;
-							home-manager.backupFileExtension = "backup";
-							home-manager.users.bilaii = import ./home.nix;
-						}
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.extraSpecialArgs = { inherit inputs theme; };
+            home-manager.users.bilaii = import ./home.nix;
+          }
         ];
       };
-
     };
-
 }

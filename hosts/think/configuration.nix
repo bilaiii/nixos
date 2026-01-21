@@ -60,6 +60,10 @@
     ];
     packages = with pkgs; [ ];
   };
+  nix.settings.trusted-users = [
+    "root"
+    "bilaii"
+  ];
   programs.zsh.enable = true;
   programs.dconf.enable = true;
 
@@ -84,9 +88,7 @@
     brightnessctl
     # Neovim
     gcc
-    nil
-    live-server
-    vscode-langservers-extracted
+    nixd
     # Shell
     eza
     zoxide
