@@ -1,22 +1,8 @@
+{ pkgs, theme, ... }:
 let
-  base = "#191724";
-  surface = "#1f1d2e";
-  overlay = "#26233a";
-  muted = "#6e6a86";
-  subtle = "#908caa";
-  text = "#e0def4";
-  love = "#eb6f92";
-  gold = "#f6c177";
-  rose = "#ebbcba";
-  pine = "#31748f";
-  foam = "#9ccfd8";
-  iris = "#c4a7e7";
-  yambarize = color: "${builtins.substring 1 (-1) color}ff";
+	colors = theme;
 in
-
-{ pkgs, ... }:
 {
-
   imports = [
     ./modules/home/yambar.nix
     ./modules/home/shell.nix
@@ -47,7 +33,7 @@ in
       adw-toolbar-style = "flat";
       gtk-wide-tabs = false;
       unfocused-split-opacity = 1;
-      split-divider-color = "#ebbcba";
+      split-divider-color = colors.rose;
       gtk-single-instance = true;
       quit-after-last-window-closed = false;
       window-inherit-working-directory = false;
@@ -73,7 +59,7 @@ in
   };
   programs.zathura = {
     enable = true;
-    options = {
+    options = with colors; {
       default-bg = base;
       default-fg = text;
 
