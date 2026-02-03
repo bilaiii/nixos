@@ -10,6 +10,7 @@ mako &
 swww-daemon &
 swww img /home/bilaii/Pictures/walls/dragon.png &
 yambar &
+flameshot &
 
 # keep clipboard content
 wl-clip-persist --clipboard regular --reconnect-tries 0 &

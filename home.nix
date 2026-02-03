@@ -13,7 +13,18 @@ in
   home.stateVersion = "25.11";
 
   programs.home-manager.enable = true;
-
+	services.flameshot = {
+		enable = true;
+		settings = {
+			General = with colors; {
+				useGrimAdapter = true;
+				disabledGrimWarning = true;
+				uiColor = rose;
+				contrastUiColor = base;
+				showHelp = false;
+			};
+		};
+	};
   programs.neovim = {
     enable = true;
     defaultEditor = true;
@@ -60,6 +71,8 @@ in
   programs.zathura = {
     enable = true;
     options = with colors; {
+			database = "sqlite";
+			selection-clipboard = "clipboard";
       default-bg = base;
       default-fg = text;
 
@@ -107,5 +120,6 @@ in
     ayugram-desktop
     qutebrowser
     obsidian
+		libqalculate
   ];
 }
