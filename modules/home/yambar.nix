@@ -1,7 +1,10 @@
-{ pkgs, theme, ... }:
-let
+{
+  pkgs,
+  theme,
+  ...
+}: let
   yambarize = color: "${builtins.substring 1 (-1) color}ff";
-	colors = pkgs.lib.mapAttrs (name: value: yambarize value) theme;
+  colors = pkgs.lib.mapAttrs (name: value: yambarize value) theme;
   divider = {
     label = {
       content = {
@@ -11,51 +14,46 @@ let
       };
     };
   };
-  mkTag =
-    id:
-    let
-      sid = toString id;
-    in
-    {
-      map = {
-        default = {
-          string = {
-            text = "·";
-            foreground = colors.muted;
-          };
+  mkTag = id: let
+    sid = toString id;
+  in {
+    map = {
+      default = {
+        string = {
+          text = "·";
+          foreground = colors.muted;
         };
-        conditions = {
-          "tag_${sid}_act == 1" = {
-            string = {
-              text = "✦";
-              foreground = colors.rose;
-              deco = {
-                underline = {
-                  size = 2;
-                  color = colors.rose;
-                };
+      };
+      conditions = {
+        "tag_${sid}_act == 1" = {
+          string = {
+            text = "✦";
+            foreground = colors.rose;
+            deco = {
+              underline = {
+                size = 2;
+                color = colors.rose;
               };
             };
           };
-          "tag_${sid}_urg == 1" = {
-            string = {
-              text = "*";
-              foreground = colors.love;
-            };
-          };
-          "tag_${sid}_pop == 1" = {
-            string = {
-              text = "⋄";
-              foreground = colors.text;
-            };
+        };
+        "tag_${sid}_urg == 1" = {
+          string = {
+            text = "*";
+            foreground = colors.love;
           };
         };
-        on-click = "mmsg -t ${sid}";
+        "tag_${sid}_pop == 1" = {
+          string = {
+            text = "⋄";
+            foreground = colors.text;
+          };
+        };
       };
+      on-click = "mmsg -t ${sid}";
     };
-in
-{
-
+  };
+in {
   programs.yambar = {
     enable = true;
     settings = {

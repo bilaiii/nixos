@@ -1,35 +1,34 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  inputs,
+  ...
+}: {
   imports = [
-    # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
 
-  # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "think"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.hostName = "think";
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
   networking.networkmanager.enable = true;
+  networking.nameservers = ["1.1.1.1" "1.0.0.1"];
+  services.resolved = {
+    enable = true;
+    dnssec = "true";
+    domains = ["~."];
+    fallbackDns = ["1.1.1.1#cloudflare-dns.com" "1.0.0.1#cloudflare-dns.com"];
+    settings = {
+      Resolve = {
+        DNSOverTLS = "yes";
+      };
+    };
+  };
 
-  # Set your time zone.
   time.timeZone = "Europe/Kyiv";
-
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "uk_UA.UTF-8";
     LC_IDENTIFICATION = "uk_UA.UTF-8";
@@ -42,14 +41,19 @@
     LC_TIME = "uk_UA.UTF-8";
   };
 
-  # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
+
   powerManagement.enable = true;
-  powerManagement.powertop.enable = true;
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  services.tlp.enable = true;
+  services.logind.settings.Login = {
+    HandleLidSwitch = "suspend";
+    HandleLidSwitchExternalPower = "suspend";
+    HandleLidSwitchDocked = "ignore";
+  };
+
   users.users.bilaii = {
     shell = pkgs.zsh;
     isNormalUser = true;
@@ -58,73 +62,33 @@
       "networkmanager"
       "wheel"
     ];
-    packages = with pkgs; [ ];
+    packages = with pkgs; [];
   };
   nix.settings.trusted-users = [
     "root"
     "bilaii"
   ];
+
+  programs.mango.enable = true;
   programs.zsh.enable = true;
   programs.dconf.enable = true;
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-  services.displayManager.ly.enable = true;
+  services.displayManager.ly = {
+    enable = true;
+    package = inputs.nixpkgs-stable.legacyPackages.${pkgs.system}.ly;
+  };
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
+  nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
-    # WM Stuff
-    ghostty
-    grim
-    slurp
-    wl-clipboard
-    swww
-    mako
-    libnotify
-    yambar
-    # Other
     wget
     brightnessctl
     # Neovim
     gcc
     nixd
-    # Shell
-    eza
-    zoxide
-    bat
-    btop
-    wiremix
+    alejandra
   ];
   fonts.packages = with pkgs; [
     cozette
   ];
-  programs.mango.enable = true;
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.11"; # Did you read the comment?
+  system.stateVersion = "25.11";
 }

@@ -1,7 +1,7 @@
 {
-
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -11,23 +11,30 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+		nixvim.url = "github:nix-community/nixvim";
   };
 
   outputs =
     {
       self,
       nixpkgs,
+			nixpkgs-stable,
       mangowc,
       neovim-nightly-overlay,
       home-manager,
+			nixvim,
     }@inputs:
     let
       theme = import ./modules/home/theme.nix;
+      system = "x86_64-linux";
+
     in
     {
 
       nixosConfigurations.think = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit neovim-nightly-overlay; };
+        specialArgs = { 
+					inherit neovim-nightly-overlay inputs;
+				};
         modules = [
           (
             { pkgs, ... }:
